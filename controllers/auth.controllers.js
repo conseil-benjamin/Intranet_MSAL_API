@@ -6,6 +6,7 @@ module.exports.login = async (req, res) => {
         console.log('user', user);
         console.log(user[0].username, user[0].email, user[0].role);
         const token = jwt.sign({
+            id: user[0].id,
             username: user[0].username,
             email: user[0].email,
             role: user[0].role, 
@@ -17,30 +18,13 @@ module.exports.login = async (req, res) => {
     }
 };
 
-module.exports.checkJwtToken = async (req, res, next) => {
-try {
-  const token = req.header("Authorization").replace("Bearer ", "");
-
-if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Accès non autorisé. Token manquant." });
-  }
-
-    try {
-        const decoded = jwt.verify(token, process.env.TOKEN_SECRET_JWT); 
-            if (!decoded) {
-               return res.status(401).json({ message: "Accès non autorisé. Token invalide." });
-            }
-            next();
-        } catch (error) {
-            console.error("Erreur de vérification du token:", error);
-            return res
-            .status(401)
-            .json({ message: "Accès non autorisé. Token invalide." });
-            }
-} catch (error) {
-    console.error('Erreur lors de l\'exécution de la requête :', error.message);
-    res.status(500).json('Erreur lors de l\'exécution de la requête');
-}
+module.exports.isAdmin = async (req, res, next) => {
+    if (!req.userRole) {
+        res.status(401).json('Accès non autorisé. Token invalide.');
+        return;
+    } else if (req.userRole !== 'admin') {
+        res.status(403).json('Accès non autorisé');
+        return;
+    }
+    res.json('Accès autorisé');
 };

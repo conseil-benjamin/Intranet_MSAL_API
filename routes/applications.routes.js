@@ -1,13 +1,12 @@
 const express = require("express");
 
 const {
-  login, isAdmin
-} = require("../controllers/auth.controllers");
+    getAllApplications
+} = require("../controllers/applications.controllers");
 
 const router = express.Router();
 const authMiddleware = require("../middlewares/authMiddleware");
 
-router.post("/login", login);
-router.get("/is-admin",authMiddleware, isAdmin);
+router.get("/get-all-applications",authMiddleware, getAllApplications);
 
 module.exports = router;

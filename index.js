@@ -11,7 +11,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/v1/users", require("./routes/users.routes"));
 app.use("/api/v1/auth", require("./routes/auth.routes"));
 app.use("/api/v1/admin", require("./routes/admin.routes"));
-
+app.use("/api/v1/shortcuts", require("./routes/shortcuts.routes"));
+app.use("/api/v1/applications", require("./routes/applications.routes"));
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

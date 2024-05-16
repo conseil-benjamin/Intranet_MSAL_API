@@ -19,6 +19,7 @@ const authMiddleware = (req, res, next) => {
     console.log("decoded:", decoded);
     console.log("decoded.role:", decoded.role);
     req.userRole = decoded.role;
+    req.userId = decoded.id;
     next();
   } catch (error) {
 
