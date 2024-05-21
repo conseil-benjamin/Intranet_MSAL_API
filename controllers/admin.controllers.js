@@ -58,7 +58,8 @@ module.exports.updateApplication = async (req, res) => {
         const enLigne = req.body.en_ligne;
         const categorie = req.body.categorie;
         const urlIcone = req.body.url_icone;
-        connection.query('UPDATE applications set url_application = ?, name = ?, en_ligne = ?, categorie = ?, url_icone = ? WHERE id_application = ?', [urlApplication, name, enLigne, categorie, urlIcone, idApplication], (err, results, fields) => {
+        const interne = req.body.interne;
+        connection.query('UPDATE applications set url_application = ?, name = ?, en_ligne = ?, categorie = ?, url_icone = ?, interne = ? WHERE id_application = ?', [urlApplication, name, enLigne, categorie, urlIcone, interne, idApplication], (err, results, fields) => {
             if (err) {
                 console.error('Erreur lors de l\'exécution de la requête :', err.stack);
                 res.status(500).json('Erreur lors de l\'exécution de la requête');
@@ -85,8 +86,9 @@ module.exports.addApplication = async (req, res) => {
         const enLigne = req.body.en_ligne;
         const categorie = req.body.categorie;
         const urlIcone = req.body.url_icone;
-        const sql = 'INSERT INTO applications (url_application, name, en_ligne, categorie, url_icone) VALUES (?, ?, ?, ?, ?)';
-        connection.query(sql, [urlApplication, name, enLigne, categorie, urlIcone], (err, results, fields) => {
+        const interne = req.body.interne;
+        const sql = 'INSERT INTO applications (url_application, name, en_ligne, categorie, url_icone, interne) VALUES (?, ?, ?, ?, ?, ?)';
+        connection.query(sql, [urlApplication, name, enLigne, categorie, urlIcone, interne], (err, results, fields) => {
             if (err) {
                 console.error('Erreur lors de l\'exécution de la requête :', err.stack);
                 res.status(500).json('Erreur lors de l\'exécution de la requête');
