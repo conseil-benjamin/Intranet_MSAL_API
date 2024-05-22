@@ -54,8 +54,11 @@ module.exports.updatePassword = async (req, res) => {
         const site = req.body.site;
         const login = req.body.login;
         const folder = req.body.folder;
-        // TODO : Vérifier si le mot de passe est le même qu'en bdd 
-        connection.query('UPDATE passwords set password = ?, login = ?, site = ?, folder = ?', [password, site, login, folder], (err, results, fields) => {
+        const idPassword = req.params.id;
+
+        const cryptedPassword = CryptoJS.AES.encrypt(password, process.env.CRYPTO_KEY).toString();
+
+        connection.query('UPDATE passwords set password = ?, login = ?, site = ?, folder = ? WHERE id_password = ? AND id_user = ?', [cryptedPassword, login, site, folder, idPassword, userId], (err, results, fields) => {
             if (err) {
                 console.error('Erreur lors de l\'exécution de la requête :', err.stack);
                 res.status(500).json('Erreur lors de l\'exécution de la requête');
@@ -85,6 +88,26 @@ module.exports.deletePassword = async (req, res) => {
         });
     } catch (error) {
         console.error('Erreur :', error.message);
+        res.status(500).json('Erreur lors de l\'exécution de la requête');
+    }
+};
+
+module.exports.getPassword = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const idPassword = req.params.id;
+        connection.query('SELECT * FROM passwords WHERE id_password = ?',[idPassword], (err, results, fields) => {
+            if (err) {
+                console.error('Erreur lors de l\'exécution de la requête :', err.stack);
+                res.status(500).json('Erreur lors de l\'exécution de la requête');
+                return;
+            }
+            console.log('Résultats de la requête :', results);
+            results[0].password = CryptoJS.AES.decrypt(results[0].password, process.env.CRYPTO_KEY).toString(CryptoJS.enc.Utf8);
+            res.json(results);
+        });
+    } catch (error) {
+        console.error('Erreur lors de l\'exécution de la requête :', error.message);
         res.status(500).json('Erreur lors de l\'exécution de la requête');
     }
 };
