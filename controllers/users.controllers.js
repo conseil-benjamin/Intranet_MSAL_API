@@ -1,4 +1,5 @@
 const connection = require('../config/db');
+const jwt = require('jsonwebtoken');
 
 module.exports.getUsers = async (req, res) => {
     try {
@@ -44,8 +45,9 @@ module.exports.createAnewUser = async (req, res) => {
       const email = req.body.email;
       const role = req.body.role;
       const username = req.body.username;
-      const sql = 'INSERT INTO users (username, email, role) VALUES (?, ?, ?)';
-        connection.query(sql, [username, email, role], (err, results, fields) => {
+      const a2factive = req.body.a2fActive;
+      const sql = 'INSERT INTO users (username, email, role, a2f_activate) VALUES (?, ?, ?, ?)';
+        connection.query(sql, [username, email, role, a2factive], (err, results, fields) => {
             if (err) {
                 console.error('Erreur lors de l\'exécution de la requête :', err.stack);
                 res.status(500).json('Erreur lors de l\'exécution de la requête');
@@ -61,7 +63,14 @@ module.exports.createAnewUser = async (req, res) => {
                 email: email,
                 role: role
             };
-            res.json([createdUser]);
+
+            const token = jwt.sign({
+                id: createdUser.id,
+                username: createdUser.username,
+                email: createdUser.email,
+                role: createdUser.role, 
+            }, process.env.TOKEN_SECRET_JWT);
+            res.json({createdUser: [createdUser], token: token});
         });
     } catch (error) {
         console.error('Erreur lors de l\'exécution de la requête :', error.message);

@@ -14,6 +14,7 @@ app.use("/api/v1/admin", require("./routes/admin.routes"));
 app.use("/api/v1/shortcuts", require("./routes/shortcuts.routes"));
 app.use("/api/v1/applications", require("./routes/applications.routes"));
 app.use("/api/v1/passwords", require("./routes/passwords.routes"));
+app.use("/api/v1/2af", require("./routes/2af.routes"));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
